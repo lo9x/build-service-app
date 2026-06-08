@@ -1,0 +1,22 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub/
+/build/
+/coverage/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Platform outputs
+android/app/debug
+android/app/profile
+android/app/release
+
+# Local secrets
+.env
+lib/firebase_options.dart.bak

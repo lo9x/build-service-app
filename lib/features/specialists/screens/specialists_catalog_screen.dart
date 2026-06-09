@@ -39,25 +39,35 @@ class _SpecialistsCatalogScreenState extends State<SpecialistsCatalogScreen> {
   Widget build(BuildContext context) {
     return AppPageScaffold(
       title: 'Каталог специалистов',
+      subtitle: 'Поиск исполнителей по городу и профессии',
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
           return Column(
             children: [
-              SectionCard(
+              const HeroPanel(
+                eyebrow: 'Специалисты',
+                title: 'Подберите исполнителя под задачу за несколько касаний.',
+                description: 'В карточке видны профессия, город, опыт и стартовая цена. Этого достаточно для MVP-демонстрации поиска специалистов.',
+                dark: false,
+              ),
+              const SizedBox(height: 16),
+              FilterPanel(
+                title: 'Фильтры',
+                description: 'Оставьте пустым, если хотите показать общий список.',
                 child: Column(
                   children: [
                     TextField(
                       controller: _cityController,
                       decoration: const InputDecoration(
-                        labelText: 'Фильтр по городу',
+                        labelText: 'Город',
                       ),
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _professionController,
                       decoration: const InputDecoration(
-                        labelText: 'Фильтр по профессии',
+                        labelText: 'Профессия',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -85,42 +95,37 @@ class _SpecialistsCatalogScreenState extends State<SpecialistsCatalogScreen> {
               else if (_controller.items.isEmpty)
                 const EmptyBlock(
                   title: 'Специалисты не найдены',
-                  message:
-                      'Попробуйте изменить город или профессию в фильтре.',
+                  message: 'Измените фильтр по городу или профессии и попробуйте ещё раз.',
                 )
               else
                 ..._controller.items.map(
                   (item) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: SectionCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: CatalogCard(
+                      title: item.user.name,
+                      subtitle: item.description,
+                      onTap: () => context.push('/specialists/${item.id}'),
+                      meta: [
+                        MetaChip(label: item.profession, icon: Icons.badge_outlined),
+                        MetaChip(label: item.user.city, icon: Icons.location_on_outlined),
+                        MetaChip(label: '${item.experience} лет опыта', icon: Icons.work_outline),
+                        MetaChip(
+                          label: 'от ${moneyFormat.format(item.priceFrom)}',
+                          icon: Icons.payments_outlined,
+                        ),
+                      ],
+                      footer: Row(
                         children: [
-                          Text(
-                            item.user.name,
-                            style: Theme.of(context).textTheme.titleLarge,
+                          Expanded(
+                            child: Text(
+                              'Подробнее о специалисте и его опыте',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              MetaChip(label: item.profession),
-                              MetaChip(label: item.user.city),
-                              MetaChip(label: '${item.experience} лет опыта'),
-                              MetaChip(
-                                label:
-                                    'от ${moneyFormat.format(item.priceFrom)}',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(item.description),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () =>
-                                context.push('/specialists/${item.id}'),
-                            child: const Text('Подробнее'),
+                          const SizedBox(width: 12),
+                          TextButton(
+                            onPressed: () => context.push('/specialists/${item.id}'),
+                            child: const Text('Открыть'),
                           ),
                         ],
                       ),

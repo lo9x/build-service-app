@@ -12,227 +12,219 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
-    final theme = Theme.of(context);
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFF7F1E9), Color(0xFFECE2D6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Build Service',
-                      style: theme.textTheme.headlineMedium,
-                    ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 36),
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Build Service',
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
-                  TextButton(
-                    onPressed: () => context.push('/profile'),
-                    child: Text(auth.isAuthenticated ? 'Профиль' : 'Войти'),
+                ),
+                TextButton(
+                  onPressed: () => context.push(auth.isAuthenticated ? '/profile' : '/auth'),
+                  child: Text(auth.isAuthenticated ? 'Профиль' : 'Вход'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            HeroPanel(
+              eyebrow: AppConfig.useMockApi ? 'Демо-режим' : 'Подключено к API',
+              title: 'Поиск специалистов и заказов в одном приложении.',
+              description: auth.isAuthenticated
+                  ? 'Сценарии уже подстроены под вашу роль. Заказчик публикует заказ и смотрит отклики, специалист ведёт анкету и находит работу.'
+                  : 'Гость просматривает каталоги, а после входа открываются заказы, отклики и личный кабинет. Интерфейс подготовлен для демонстрации куратору.',
+              actions: [
+                ElevatedButton(
+                  onPressed: () => context.push('/specialists'),
+                  child: const Text('Найти специалиста'),
+                ),
+                OutlinedButton(
+                  onPressed: () => context.push('/orders'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white38),
                   ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  color: const Color(0xFF202624),
+                  child: const Text('Смотреть заказы'),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        AppConfig.useMockApi
-                            ? 'Демо-режим · mock API'
-                            : 'Подключено к backend API',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Поиск строительных специалистов и заказов в одном приложении.',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: Colors.white,
-                        height: 1.15,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      auth.isAuthenticated
-                          ? 'Сценарии подстраиваются под вашу роль: заказчик создаёт заказ, специалист откликается и ведёт анкету.'
-                          : 'Гость может просматривать каталоги, а после входа открываются заказы, отклики и личный кабинет.',
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: Colors.white70,
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => context.push('/specialists'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFF202624),
-                            minimumSize: const Size(160, 56),
-                          ),
-                          child: const Text('Специалисты'),
-                        ),
-                        OutlinedButton(
-                          onPressed: () => context.push('/orders'),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Colors.white24),
-                            foregroundColor: Colors.white,
-                            minimumSize: const Size(160, 56),
-                          ),
-                          child: const Text('Заказы'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-              Wrap(
+              ],
+              footer: const Wrap(
                 spacing: 12,
                 runSpacing: 12,
-                children: const [
+                children: [
                   SizedBox(
-                    width: 160,
-                    child: StatPill(label: 'Основные роли', value: '2'),
+                    width: 150,
+                    child: StatPill(label: 'Роли MVP', value: '2'),
                   ),
                   SizedBox(
-                    width: 160,
-                    child: StatPill(label: 'Ключевые сценарии', value: '6+'),
+                    width: 150,
+                    child: StatPill(label: 'Сценарии', value: '8'),
                   ),
                   SizedBox(
-                    width: 160,
-                    child: StatPill(label: 'Единый backend', value: 'REST'),
+                    width: 150,
+                    child: StatPill(label: 'Интеграция', value: 'REST'),
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
-              SectionCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Что можно сделать', style: theme.textTheme.titleLarge),
-                    const SizedBox(height: 16),
-                    const _HomeActionTile(
-                      title: 'Каталог специалистов',
-                      subtitle:
-                          'Просмотр карточек с профессией, городом, опытом и стартовой ценой.',
-                      route: '/specialists',
-                    ),
-                    const SizedBox(height: 12),
-                    const _HomeActionTile(
-                      title: 'Каталог заказов',
-                      subtitle:
-                          'Список открытых заказов с бюджетом и детальной страницей.',
-                      route: '/orders',
-                    ),
-                    if (auth.isCustomer) ...[
-                      const SizedBox(height: 12),
-                      const _HomeActionTile(
-                        title: 'Создать заказ',
-                        subtitle:
-                            'Форма для заказчика с названием, категорией, городом и бюджетом.',
-                        route: '/orders/create',
-                      ),
-                    ],
-                    if (auth.isAuthenticated) ...[
-                      const SizedBox(height: 12),
-                      const _HomeActionTile(
-                        title: 'Личный профиль',
-                        subtitle:
-                            'Информация о текущем пользователе, ИНН, статус проверки и анкета специалиста.',
-                        route: '/profile',
-                      ),
-                    ],
-                    if (!auth.isAuthenticated) ...[
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => context.push('/auth'),
-                        child: const Text('Регистрация и вход'),
-                      ),
-                    ],
-                  ],
-                ),
+            ),
+            const SizedBox(height: 22),
+            const SectionHeading(
+              title: 'Что можно показать на защите',
+              description: 'Ниже собраны основные сценарии, которые удобно открывать куратору по шагам.',
+            ),
+            const SizedBox(height: 16),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = constraints.maxWidth < 900;
+                final cards = [
+                  ActionTile(
+                    title: 'Каталог специалистов',
+                    description: 'Карточки с городом, профессией, опытом и стартовой ценой.',
+                    icon: Icons.engineering_rounded,
+                    onTap: () => context.push('/specialists'),
+                  ),
+                  ActionTile(
+                    title: 'Каталог заказов',
+                    description: 'Открытые заказы, фильтры и подробная страница проекта.',
+                    icon: Icons.apartment_rounded,
+                    onTap: () => context.push('/orders'),
+                  ),
+                  ActionTile(
+                    title: auth.isCustomer ? 'Создать заказ' : 'Профиль пользователя',
+                    description: auth.isCustomer
+                        ? 'Заполните форму заказа и сразу покажите рабочий сценарий заказчика.'
+                        : 'Откройте личный кабинет и продемонстрируйте настройки текущей роли.',
+                    icon: auth.isCustomer ? Icons.add_box_rounded : Icons.person_rounded,
+                    onTap: () => context.push(auth.isCustomer ? '/orders/create' : '/profile'),
+                  ),
+                  ActionTile(
+                    title: 'Регистрация и вход',
+                    description: 'Экран под обе роли с email-входом и демонстрационным Google-сценарием.',
+                    icon: Icons.login_rounded,
+                    onTap: () => context.push('/auth'),
+                  ),
+                ];
+
+                if (compact) {
+                  return Column(
+                    children: cards
+                        .map(
+                          (card) => Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: card,
+                          ),
+                        )
+                        .toList(),
+                  );
+                }
+
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: cards
+                      .map(
+                        (card) => SizedBox(
+                          width: (constraints.maxWidth - 12) / 2,
+                          child: card,
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
+            const SizedBox(height: 22),
+            const SectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SectionHeading(
+                    title: 'Логика MVP',
+                    description: 'Эти три шага удобно проговаривать во время показа проекта.',
+                  ),
+                  SizedBox(height: 16),
+                  _StoryRow(
+                    index: '01',
+                    title: 'Заказчик регистрируется и создаёт заказ',
+                    text: 'Покажите форму регистрации, затем создание заказа с городом, бюджетом и описанием.',
+                  ),
+                  SizedBox(height: 12),
+                  _StoryRow(
+                    index: '02',
+                    title: 'Специалист открывает каталог заказов',
+                    text: 'Отфильтруйте заказы, откройте детальную страницу и продемонстрируйте карточку заказа.',
+                  ),
+                  SizedBox(height: 12),
+                  _StoryRow(
+                    index: '03',
+                    title: 'Специалист оставляет отклик, заказчик его видит',
+                    text: 'Это основной конец-to-end сценарий, который подтверждает рабочий MVP.',
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _HomeActionTile extends StatelessWidget {
-  const _HomeActionTile({
+class _StoryRow extends StatelessWidget {
+  const _StoryRow({
+    required this.index,
     required this.title,
-    required this.subtitle,
-    required this.route,
+    required this.text,
   });
 
+  final String index;
   final String title;
-  final String subtitle;
-  final String route;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.push(route),
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: const Color(0xFFD7C4AF)),
-          color: Colors.white.withOpacity(0.65),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(subtitle),
-                ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xFFD8CCBC)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFF274C46),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Text(
+              index,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(width: 12),
-            const Icon(Icons.arrow_forward_rounded),
-          ],
-        ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 6),
+                Text(text),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

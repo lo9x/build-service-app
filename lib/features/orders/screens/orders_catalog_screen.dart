@@ -41,6 +41,7 @@ class _OrdersCatalogScreenState extends State<OrdersCatalogScreen> {
 
     return AppPageScaffold(
       title: 'Каталог заказов',
+      subtitle: 'Открытые строительные задачи для специалистов',
       actions: [
         if (auth.isCustomer)
           TextButton(
@@ -53,20 +54,39 @@ class _OrdersCatalogScreenState extends State<OrdersCatalogScreen> {
         builder: (context, _) {
           return Column(
             children: [
-              SectionCard(
+              HeroPanel(
+                eyebrow: auth.isCustomer ? 'Сценарий заказчика' : 'Сценарий специалиста',
+                title: 'Заказы собраны в одном каталоге.',
+                description: auth.isCustomer
+                    ? 'Создавайте новые заявки и показывайте куратору, как заказчик публикует задачу и получает отклики.'
+                    : 'Специалист видит открытые заказы, фильтрует их по городу и категории и выбирает подходящие объекты.',
+                dark: false,
+                actions: auth.isCustomer
+                    ? [
+                        ElevatedButton(
+                          onPressed: () => context.push('/orders/create'),
+                          child: const Text('Создать заказ'),
+                        ),
+                      ]
+                    : const [],
+              ),
+              const SizedBox(height: 16),
+              FilterPanel(
+                title: 'Фильтры',
+                description: 'Можно быстро показать отбор по городу или категории.',
                 child: Column(
                   children: [
                     TextField(
                       controller: _cityController,
                       decoration: const InputDecoration(
-                        labelText: 'Фильтр по городу',
+                        labelText: 'Город',
                       ),
                     ),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _categoryController,
                       decoration: const InputDecoration(
-                        labelText: 'Фильтр по категории',
+                        labelText: 'Категория',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -94,34 +114,34 @@ class _OrdersCatalogScreenState extends State<OrdersCatalogScreen> {
               else if (_controller.items.isEmpty)
                 const EmptyBlock(
                   title: 'Заказы не найдены',
-                  message: 'Попробуйте изменить фильтры или создайте новый заказ.',
+                  message: 'Измените фильтры или создайте новый заказ в роли заказчика.',
                 )
               else
                 ..._controller.items.map(
                   (item) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: SectionCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    child: CatalogCard(
+                      title: item.title,
+                      subtitle: item.description,
+                      onTap: () => context.push('/orders/${item.id}'),
+                      meta: [
+                        MetaChip(label: item.category, icon: Icons.category_outlined),
+                        MetaChip(label: item.city, icon: Icons.location_on_outlined),
+                        MetaChip(
+                          label: moneyFormat.format(item.budget),
+                          icon: Icons.payments_outlined,
+                        ),
+                      ],
+                      footer: Row(
                         children: [
-                          Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.titleLarge,
+                          Expanded(
+                            child: Text(
+                              'Заказчик: ${item.customerName ?? 'не указан'}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              MetaChip(label: item.category),
-                              MetaChip(label: item.city),
-                              MetaChip(label: moneyFormat.format(item.budget)),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(item.description),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
+                          const SizedBox(width: 12),
+                          TextButton(
                             onPressed: () => context.push('/orders/${item.id}'),
                             child: const Text('Открыть заказ'),
                           ),

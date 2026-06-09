@@ -1,32 +1,56 @@
 # Build Service App
 
-Flutter MVP for a construction marketplace with shared REST API, role-based flows, mock/demo mode, and secure local configuration through `.env`.
+Build Service App is a Flutter MVP application for a construction services marketplace.
+The app allows customers to create construction orders and specialists to browse orders and send responses.
 
-## Features
+## Project Goal
 
-- registration with role selection
-- login with email and password
-- Google sign-in flow for Firebase mode
-- home screen with role-based actions
-- specialists catalog with filters
-- specialist profile details
-- orders catalog with filters
-- order details page
-- order creation for customers
-- response submission for specialists
-- current user profile
+The purpose of the project is to demonstrate a working mobile MVP connected to a shared backend architecture through REST API.
+
+The application supports two main roles:
+
+- Customer
+- Specialist
+
+## Main Features
+
+- user registration
+- user login
+- role selection during registration
+- customer profile with company type and INN
 - specialist profile editing
-- loading, validation, empty-state, and error handling
+- specialists catalog
+- specialist details page
+- orders catalog
+- order details page
+- create order form
+- send response to order
+- current user profile
+- loading, validation, and error states
+- demo mode with mock data
+- local `.env` configuration for safe secret handling
 
-## Security Rules
+## Roles
 
-- We do not commit real Firebase configuration, database secrets, service account keys, or backend credentials.
-- Local values live in `.env`, which is ignored by git.
-- The repository contains only `.env.example`.
-- For Android and iOS, local Firebase files such as `google-services.json` and `GoogleService-Info.plist` are ignored too.
+### Guest
 
-Important:
-Client-side Flutter apps must never contain real database passwords or server secrets. Those belong only in the backend `.env`. In the mobile app, only public client configuration should be used, and all sensitive operations must go through your Node.js backend.
+- can browse specialists
+- can browse orders
+- can open auth screen
+
+### Customer
+
+- can register and log in
+- can create orders
+- can view own order responses
+- can manage personal profile data
+
+### Specialist
+
+- can register and log in
+- can edit specialist questionnaire
+- can browse orders
+- can send responses to orders
 
 ## Tech Stack
 
@@ -35,46 +59,34 @@ Client-side Flutter apps must never contain real database passwords or server se
 - Provider
 - GoRouter
 - Dio
-- flutter_secure_storage
-- flutter_dotenv
-- Firebase Auth
-- Google Sign-In
+- Flutter Secure Storage
+- Firebase Authentication (optional for Google Sign-In)
+- REST API
+- JWT authentication
 
-## Local Env Setup
+## Security
 
-1. Copy `.env.example` to `.env`
-2. Fill in local values
-3. Run the app
+Sensitive configuration is not stored in the repository.
 
-Example:
+The project uses:
 
-```bash
-copy .env.example .env
-```
+- `.env.example` for template configuration
+- local `.env` for private values
+- ignored Firebase config files
+- no database credentials in the mobile client
+
+Important: real database secrets must only be stored on the backend side.
 
 ## Demo Mode
 
-By default the app is expected to run in mock mode:
+By default, the app can work in demo mode with local mock data.
 
-- `USE_MOCK_API=true`
-- built-in demo data is used
-- you can test flows without backend
-
-Test accounts in mock mode:
+Test accounts:
 
 - Customer: `customer@test.ru` / `123456`
 - Specialist: `specialist@test.ru` / `123456`
 
-## Real Backend Mode
-
-To connect the shared backend, set:
-
-```env
-USE_MOCK_API=false
-API_BASE_URL=http://10.0.2.2:3000
-```
-
-Expected endpoints:
+## Expected API Endpoints
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
@@ -89,35 +101,6 @@ Expected endpoints:
 - `POST /api/responses`
 - `GET /api/responses/order/:id`
 
-Protected requests must send:
-
-```text
-Authorization: Bearer <jwt>
-```
-
-## Firebase Setup
-
-Google sign-in is disabled by default and can stay disabled in demo mode.
-
-To enable real Firebase Auth:
-
-1. Create a Firebase project
-2. Add your Android app there
-3. Put local values into `.env`
-4. Place `google-services.json` locally into `android/app/`
-5. Start the app with:
-
-```env
-ENABLE_FIREBASE_GOOGLE_AUTH=true
-```
-
-Do not push:
-
-- `.env`
-- `google-services.json`
-- `GoogleService-Info.plist`
-- service account json files
-
 ## Project Structure
 
 ```text
@@ -126,10 +109,6 @@ lib/
   main.dart
   config/
   core/
-    models/
-    network/
-    services/
-    storage/
   features/
     auth/
     home/
@@ -137,43 +116,41 @@ lib/
     profile/
     specialists/
   shared/
-    theme/
-    widgets/
 ```
 
-## Run
+## How to Run
 
-Flutter SDK was not available in this environment, so the project was prepared manually. After Flutter is installed, run:
+1. Install Flutter SDK
+2. Open the project folder
+3. Create local env file
+4. Install dependencies
+5. Run the app
+
+Commands:
 
 ```bash
-flutter create .
+copy .env.example .env
 flutter pub get
 flutter run
 ```
 
-If you want Android specifically:
-
-```bash
-flutter run -d android
-```
-
-If you only want to preview UI quickly after Flutter installation:
+To run in browser:
 
 ```bash
 flutter run -d chrome
 ```
 
-## GitHub
+## Presentation Scenario
 
-Recommended flow:
+The application can be demonstrated in the following order:
 
-```bash
-git checkout android
-git add .
-git commit -m "feat: flutter construction service app"
-git push -u origin android
-```
+1. registration/login
+2. customer creates order
+3. specialist opens orders catalog
+4. specialist opens order details
+5. specialist sends response
+6. customer views response in order page
 
-## Current Limitation
+## Result
 
-The source code is ready, but I could not execute `flutter pub get`, `flutter run`, or build APK in this environment because Flutter SDK is not installed here yet. Once Flutter is installed on your machine, the next step is to generate platform folders and run the app locally.
+The project represents a complete Flutter MVP for coursework submission with a clean UI, role-based flows, demo support, and secure local configuration.

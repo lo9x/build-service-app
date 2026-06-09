@@ -742,7 +742,7 @@ class MockAppRepository implements AppRepository {
     }
     _seeded = true;
 
-    final customer = AppUser(
+    const customer = AppUser(
       id: 'user_1',
       name: 'Мария Воронова',
       email: 'customer@test.ru',
@@ -754,7 +754,7 @@ class MockAppRepository implements AppRepository {
       verificationStatus: VerificationStatus.approved,
     );
 
-    final specialistUser = AppUser(
+    const specialistUser = AppUser(
       id: 'user_2',
       name: 'Илья Сергеев',
       email: 'specialist@test.ru',
@@ -762,7 +762,7 @@ class MockAppRepository implements AppRepository {
       city: 'Тольятти',
     );
 
-    final specialistUserTwo = AppUser(
+    const specialistUserTwo = AppUser(
       id: 'user_3',
       name: 'Никита Абрамов',
       email: 'nikita@test.ru',

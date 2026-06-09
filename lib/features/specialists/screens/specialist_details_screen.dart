@@ -58,6 +58,7 @@ class _SpecialistDetailsScreenState extends State<SpecialistDetailsScreen> {
   Widget build(BuildContext context) {
     return AppPageScaffold(
       title: 'Профиль специалиста',
+      subtitle: 'Карточка исполнителя из каталога',
       child: _isLoading
           ? const LoadingBlock()
           : _error != null || _specialist == null
@@ -65,25 +66,21 @@ class _SpecialistDetailsScreenState extends State<SpecialistDetailsScreen> {
                   message: _error ?? 'Специалист не найден.',
                   onRetry: _load,
                 )
-              : SectionCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _specialist!.user.name,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _specialist!.profession,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 16),
-                      Wrap(
+              : Column(
+                  children: [
+                    HeroPanel(
+                      eyebrow: _specialist!.profession,
+                      title: _specialist!.user.name,
+                      description: _specialist!.description,
+                      dark: false,
+                      footer: Wrap(
                         spacing: 10,
                         runSpacing: 10,
                         children: [
-                          MetaChip(label: _specialist!.user.city, icon: Icons.location_on),
+                          MetaChip(
+                            label: _specialist!.user.city,
+                            icon: Icons.location_on_outlined,
+                          ),
                           MetaChip(
                             label: '${_specialist!.experience} лет опыта',
                             icon: Icons.work_outline,
@@ -94,27 +91,24 @@ class _SpecialistDetailsScreenState extends State<SpecialistDetailsScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'О специалисте',
-                        style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 16),
+                    const SectionCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SectionHeading(
+                            title: 'Как показать этот экран',
+                            description: 'Используйте его на защите, чтобы продемонстрировать просмотр анкеты специалиста из общего каталога.',
+                          ),
+                          SizedBox(height: 14),
+                          Text(
+                            'В MVP заказ создаётся отдельно, а специалист отправляет отклик со страницы заказа. Поэтому здесь акцент сделан на доверии к исполнителю: опыт, профессия, город и стартовая цена.',
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Text(_specialist!.description),
-                      const SizedBox(height: 20),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(color: const Color(0xFFD7C4AF)),
-                        ),
-                        child: const Text(
-                          'В MVP заказ создаётся отдельно, а специалист отправляет отклик со страницы заказа.',
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
     );
   }

@@ -46,9 +46,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     final order = await _controller.loadById(widget.orderId);
     List<OrderResponse> responses = [];
 
-    if (order != null &&
-        auth.isAuthenticated &&
-        auth.user?.id == order.customerId) {
+    if (order != null && auth.isAuthenticated && auth.user?.id == order.customerId) {
       responses = await _controller.loadResponses(
         orderId: widget.orderId,
         token: auth.token,
@@ -78,11 +76,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     final auth = context.watch<AuthController>();
 
     if (_isLoading) {
-      return const Scaffold(body: SafeArea(child: LoadingBlock()));
+      return const Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: LoadingBlock(),
+          ),
+        ),
+      );
     }
 
     return AppPageScaffold(
       title: 'Страница заказа',
+      subtitle: 'Подробности проекта и отклики специалистов',
       actions: [
         if (auth.isSpecialist)
           TextButton(
@@ -97,27 +103,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             )
           : Column(
               children: [
-                SectionCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                HeroPanel(
+                  eyebrow: _order!.category,
+                  title: _order!.title,
+                  description: _order!.description,
+                  dark: false,
+                  footer: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      Text(
-                        _order!.title,
-                        style: Theme.of(context).textTheme.headlineMedium,
+                      MetaChip(label: _order!.city, icon: Icons.location_on_outlined),
+                      MetaChip(
+                        label: moneyFormat.format(_order!.budget),
+                        icon: Icons.payments_outlined,
                       ),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          MetaChip(label: _order!.category),
-                          MetaChip(label: _order!.city),
-                          MetaChip(label: moneyFormat.format(_order!.budget)),
-                          MetaChip(label: 'Статус: ${_order!.status}'),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
-                      Text(_order!.description),
+                      MetaChip(label: 'Статус: ${_order!.status}', icon: Icons.flag_outlined),
                     ],
                   ),
                 ),
@@ -127,31 +127,27 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Отклик специалиста',
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Отправьте сообщение и свою цену. Заказчик увидит отклик на этой странице.',
+                        const SectionHeading(
+                          title: 'Отклик специалиста',
+                          description: 'Сообщение и предложенная цена отправляются заказчику.',
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () =>
-                              context.push('/orders/${widget.orderId}/respond'),
+                          onPressed: () => context.push('/orders/${widget.orderId}/respond'),
                           child: const Text('Отправить отклик'),
                         ),
                       ],
                     ),
                   ),
                 if (auth.isAuthenticated && auth.user?.id == _order!.customerId) ...[
+                  const SizedBox(height: 16),
                   SectionCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Отклики специалистов',
-                          style: Theme.of(context).textTheme.titleLarge,
+                        const SectionHeading(
+                          title: 'Отклики специалистов',
+                          description: 'Итоговый экран для проверки конца пользовательского сценария.',
                         ),
                         const SizedBox(height: 16),
                         if (_responses.isEmpty)
@@ -160,45 +156,30 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ..._responses.map(
                             (response) => Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.65),
-                                  borderRadius: BorderRadius.circular(22),
-                                  border: Border.all(
-                                    color: const Color(0xFFD7C4AF),
+                              child: CatalogCard(
+                                title: response.specialistName ?? 'Специалист',
+                                subtitle: response.message,
+                                onTap: () {},
+                                meta: [
+                                  MetaChip(
+                                    label: moneyFormat.format(response.price),
+                                    icon: Icons.payments_outlined,
                                   ),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      response.specialistName ?? 'Специалист',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(fontWeight: FontWeight.w800),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      'Предложение: ${moneyFormat.format(response.price)}',
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(response.message),
-                                  ],
-                                ),
+                                  MetaChip(label: response.status, icon: Icons.schedule_outlined),
+                                ],
                               ),
                             ),
                           ),
                       ],
                     ),
                   ),
-                ] else if (!auth.isAuthenticated)
+                ] else if (!auth.isAuthenticated) ...[
+                  const SizedBox(height: 16),
                   const EmptyBlock(
                     title: 'Войдите, чтобы продолжить',
-                    message:
-                        'Гость может смотреть карточку заказа, а для отклика или создания заказа нужна авторизация.',
+                    message: 'Гость может просматривать заказ, но для отклика и создания заказа нужна авторизация.',
                   ),
+                ],
               ],
             ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/models/app_user.dart';
 import '../../../core/models/specialist_profile.dart';
 import '../../../core/services/app_repository.dart';
 import '../../../features/auth/controllers/auth_controller.dart';
@@ -76,25 +77,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return AppPageScaffold(
       title: 'Мой профиль',
+      subtitle: 'Данные текущего пользователя и роль в системе',
       child: Column(
         children: [
+          HeroPanel(
+            eyebrow: user.role.label,
+            title: user.name,
+            description: user.isCustomer
+                ? 'Профиль заказчика с ИНН, типом деятельности и статусом проверки.'
+                : 'Профиль специалиста с редактируемой анкетой и базовыми данными аккаунта.',
+            dark: false,
+            footer: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                MetaChip(label: user.city, icon: Icons.location_on_outlined),
+                MetaChip(label: user.email, icon: Icons.mail_outline_rounded),
+                if (user.isCustomer && user.customerType != null)
+                  MetaChip(label: user.customerType!.label, icon: Icons.business_outlined),
+                if (user.isCustomer)
+                  MetaChip(
+                    label: user.verificationStatus.label,
+                    icon: Icons.verified_user_outlined,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           SectionCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(user.name, style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    MetaChip(label: user.role.label),
-                    MetaChip(label: user.city),
-                    if (user.isCustomer && user.customerType != null)
-                      MetaChip(label: user.customerType!.label),
-                    if (user.isCustomer)
-                      MetaChip(label: user.verificationStatus.label),
-                  ],
+                const SectionHeading(
+                  title: 'Данные аккаунта',
+                  description: 'Этот блок удобно показывать на защите как подтверждение ролевой модели.',
                 ),
                 const SizedBox(height: 16),
                 Text('Email: ${user.email}'),
@@ -102,11 +118,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 8),
                   Text('ИНН: ${user.inn ?? 'Не указан'}'),
                   const SizedBox(height: 8),
-                  Text(
-                    'Документ: ${user.verificationDocumentUrl ?? 'Не указан'}',
-                  ),
+                  Text('Документ: ${user.verificationDocumentUrl ?? 'Не указан'}'),
                 ],
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
                     await auth.logout();
@@ -127,11 +141,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Анкета специалиста',
-                          style: Theme.of(context).textTheme.titleLarge,
+                        const SectionHeading(
+                          title: 'Анкета специалиста',
+                          description: 'Редактирование профессии, опыта, описания и стартовой цены.',
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 18),
                         TextField(
                           controller: _professionController,
                           decoration: const InputDecoration(
@@ -167,7 +181,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const SizedBox(height: 12),
                           Text(
                             _controller.error!,
-                            style: const TextStyle(color: Color(0xFF9D3E23)),
+                            style: const TextStyle(
+                              color: Color(0xFFC66A3D),
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ],
                         const SizedBox(height: 18),
@@ -188,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           0,
                                     ),
                                   );
-                                  if (saved != null && mounted) {
+                                  if (saved != null && context.mounted) {
                                     setState(() {
                                       _profile = saved;
                                     });

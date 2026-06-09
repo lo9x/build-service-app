@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 
+import 'app_config.dart';
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -20,38 +22,38 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'demo-api-key',
-    appId: '1:000000000000:web:demo',
-    messagingSenderId: '000000000000',
-    projectId: 'demo-project',
-    authDomain: 'demo-project.firebaseapp.com',
-    storageBucket: 'demo-project.appspot.com',
+  static FirebaseOptions get web => FirebaseOptions(
+    apiKey: AppConfig.firebaseWebApiKey,
+    appId: AppConfig.firebaseWebAppId,
+    messagingSenderId: AppConfig.firebaseWebMessagingSenderId,
+    projectId: AppConfig.firebaseWebProjectId,
+    authDomain: AppConfig.firebaseWebAuthDomain,
+    storageBucket: AppConfig.firebaseWebStorageBucket,
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'demo-api-key',
-    appId: '1:000000000000:android:demo',
-    messagingSenderId: '000000000000',
-    projectId: 'demo-project',
-    storageBucket: 'demo-project.appspot.com',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: AppConfig.firebaseAndroidApiKey,
+    appId: AppConfig.firebaseAndroidAppId,
+    messagingSenderId: AppConfig.firebaseAndroidMessagingSenderId,
+    projectId: AppConfig.firebaseAndroidProjectId,
+    storageBucket: AppConfig.firebaseAndroidStorageBucket,
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'demo-api-key',
-    appId: '1:000000000000:ios:demo',
-    messagingSenderId: '000000000000',
-    projectId: 'demo-project',
-    iosBundleId: 'com.example.buildServiceApp',
-    storageBucket: 'demo-project.appspot.com',
+  static FirebaseOptions get ios => FirebaseOptions(
+    apiKey: AppConfig.firebaseIosApiKey,
+    appId: AppConfig.firebaseIosAppId,
+    messagingSenderId: AppConfig.firebaseIosMessagingSenderId,
+    projectId: AppConfig.firebaseIosProjectId,
+    iosBundleId: AppConfig.firebaseIosBundleId,
+    storageBucket: AppConfig.firebaseIosStorageBucket,
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'demo-api-key',
-    appId: '1:000000000000:macos:demo',
-    messagingSenderId: '000000000000',
-    projectId: 'demo-project',
-    iosBundleId: 'com.example.buildServiceApp',
-    storageBucket: 'demo-project.appspot.com',
+  static FirebaseOptions get macos => FirebaseOptions(
+    apiKey: AppConfig.firebaseMacosApiKey,
+    appId: AppConfig.firebaseMacosAppId,
+    messagingSenderId: AppConfig.firebaseMacosMessagingSenderId,
+    projectId: AppConfig.firebaseMacosProjectId,
+    iosBundleId: AppConfig.firebaseMacosBundleId,
+    storageBucket: AppConfig.firebaseMacosStorageBucket,
   );
 }

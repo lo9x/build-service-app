@@ -19,4 +19,15 @@ android/app/release
 
 # Local secrets
 .env
+.env.*
+!.env.example
 lib/firebase_options.dart.bak
+
+# Firebase / Android local files
+android/local.properties
+android/key.properties
+android/app/google-services.json
+android/app/src/debug/google-services.json
+android/app/src/release/google-services.json
+ios/Runner/GoogleService-Info.plist
+macos/Runner/GoogleService-Info.plist

@@ -1,156 +1,206 @@
-# Build Service App
+# Build Service
 
-Build Service App is a Flutter MVP application for a construction services marketplace.
-The app allows customers to create construction orders and specialists to browse orders and send responses.
+Build Service is a Flutter application for finding construction specialists and publishing construction orders.
 
-## Project Goal
+The project includes:
+- Flutter web client
+- Flutter Android client
+- shared data model for users, specialists, orders, and responses
+- two backend modes:
+  - local REST API mode
+  - Firebase Firestore mode for shared cloud data
 
-The purpose of the project is to demonstrate a working mobile MVP connected to a shared backend architecture through REST API.
+## Main сценарии
 
-The application supports two main roles:
+Guest:
+- browses specialists
+- browses orders
+- opens auth screen
 
-- Customer
-- Specialist
+Customer:
+- registers and signs in
+- creates an order
+- browses specialists
+- sees responses for own orders
 
-## Main Features
+Specialist:
+- registers and signs in
+- edits own profile
+- browses orders
+- sends a response to an order
 
-- user registration
-- user login
-- role selection during registration
-- customer profile with company type and INN
-- specialist profile editing
+## Screens
+
+- home
+- sign in
+- registration
 - specialists catalog
-- specialist details page
+- specialist details
 - orders catalog
-- order details page
-- create order form
-- send response to order
+- order details
+- create order
+- send response
 - current user profile
-- loading, validation, and error states
-- demo mode with mock data
-- local `.env` configuration for safe secret handling
+- management panel for filling shared data from desktop
 
-## Roles
+## Test accounts
 
-### Guest
+- `admin@buildservice.ru` / `admin123456`
+- `customer@test.ru` / `123456`
+- `customer2@test.ru` / `123456`
+- `specialist@test.ru` / `123456`
+- `nikita@test.ru` / `123456`
+- `alina@test.ru` / `123456`
 
-- can browse specialists
-- can browse orders
-- can open auth screen
+## Local launch
 
-### Customer
+1. Create local env file:
 
-- can register and log in
-- can create orders
-- can view own order responses
-- can manage personal profile data
-
-### Specialist
-
-- can register and log in
-- can edit specialist questionnaire
-- can browse orders
-- can send responses to orders
-
-## Tech Stack
-
-- Flutter
-- Dart
-- Provider
-- GoRouter
-- Dio
-- Flutter Secure Storage
-- Firebase Authentication (optional for Google Sign-In)
-- REST API
-- JWT authentication
-
-## Security
-
-Sensitive configuration is not stored in the repository.
-
-The project uses:
-
-- `.env.example` for template configuration
-- local `.env` for private values
-- ignored Firebase config files
-- no database credentials in the mobile client
-
-Important: real database secrets must only be stored on the backend side.
-
-## Demo Mode
-
-By default, the app can work in demo mode with local mock data.
-
-Test accounts:
-
-- Customer: `customer@test.ru` / `123456`
-- Specialist: `specialist@test.ru` / `123456`
-
-## Expected API Endpoints
-
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `POST /api/auth/google`
-- `GET /api/specialists`
-- `GET /api/specialists/:id`
-- `POST /api/specialists`
-- `PUT /api/specialists/:id`
-- `GET /api/orders`
-- `GET /api/orders/:id`
-- `POST /api/orders`
-- `POST /api/responses`
-- `GET /api/responses/order/:id`
-
-## Project Structure
-
-```text
-lib/
-  app.dart
-  main.dart
-  config/
-  core/
-  features/
-    auth/
-    home/
-    orders/
-    profile/
-    specialists/
-  shared/
+```powershell
+Copy-Item .env.example .env
 ```
 
-## How to Run
+2. Install packages:
 
-1. Install Flutter SDK
-2. Open the project folder
-3. Create local env file
-4. Install dependencies
-5. Run the app
-
-Commands:
-
-```bash
-copy .env.example .env
+```powershell
 flutter pub get
-flutter run
 ```
 
-To run in browser:
+3. Run web locally:
 
-```bash
+```powershell
 flutter run -d chrome
 ```
 
-## Presentation Scenario
+4. If you want the local REST API mode, run the backend in a separate terminal:
 
-The application can be demonstrated in the following order:
+```powershell
+powershell -ExecutionPolicy Bypass -File backend\start_api.ps1
+```
 
-1. registration/login
-2. customer creates order
-3. specialist opens orders catalog
-4. specialist opens order details
-5. specialist sends response
-6. customer views response in order page
+## Firebase mode
 
-## Result
+The project now supports Firebase Firestore as the shared cloud data source.
 
-The project represents a complete Flutter MVP for coursework submission with a clean UI, role-based flows, demo support, and secure local configuration.
+When Firebase config is present, the app switches from local REST mode to Firestore mode automatically.
+
+### What you need from Firebase Console
+
+Open:
+- Firebase Console
+- your project
+- `Project settings`
+- `General`
+- `Your apps`
+
+Create at least:
+- one Web app
+- one Android app if you plan to build APK with the same cloud data
+
+Then copy values into `.env`.
+
+### Required `.env` fields for web
+
+```env
+FIREBASE_WEB_API_KEY=
+FIREBASE_WEB_APP_ID=
+FIREBASE_WEB_MESSAGING_SENDER_ID=
+FIREBASE_WEB_PROJECT_ID=
+FIREBASE_WEB_AUTH_DOMAIN=
+FIREBASE_WEB_STORAGE_BUCKET=
+```
+
+### Required `.env` fields for Android
+
+```env
+FIREBASE_ANDROID_API_KEY=
+FIREBASE_ANDROID_APP_ID=
+FIREBASE_ANDROID_MESSAGING_SENDER_ID=
+FIREBASE_ANDROID_PROJECT_ID=
+FIREBASE_ANDROID_STORAGE_BUCKET=
+```
+
+### Optional Google sign-in
+
+If you configure Google provider in Firebase Authentication, set:
+
+```env
+ENABLE_FIREBASE_GOOGLE_AUTH=true
+```
+
+### Firestore rules
+
+The repository contains:
+- `firestore.rules`
+- `firestore.indexes.json`
+
+Current rules are open for demo usage so the project can work quickly during coursework review.
+
+Before real production use, these rules must be tightened.
+
+## Build web
+
+```powershell
+flutter build web
+```
+
+Output:
+
+```text
+build/web
+```
+
+## Deploy to Firebase Hosting
+
+1. Log in to Firebase CLI on your machine.
+2. Make sure `.firebaserc` points to your Firebase project id.
+3. Build web:
+
+```powershell
+flutter build web
+```
+
+4. Deploy:
+
+```powershell
+firebase deploy --only hosting,firestore
+```
+
+If `firebase` is not in PATH on Windows, use:
+
+```powershell
+C:\Users\User\AppData\Roaming\npm\firebase.cmd deploy --only hosting,firestore
+```
+
+After deploy, the site works independently from the computer on:
+
+```text
+https://build-service-app.web.app
+```
+
+## APK
+
+After Android SDK is installed and configured:
+
+```powershell
+flutter build apk
+```
+
+APK path:
+
+```text
+build/app/outputs/flutter-apk/app-release.apk
+```
+
+Android will use Firebase only after you add Android Firebase config to `.env` or `google-services.json`.
+
+## Security
+
+These files are not committed:
+- `.env`
+- `.firebaserc`
+- `google-services.json`
+- `GoogleService-Info.plist`
+- local backend data
+
+This keeps local secrets and Firebase project bindings outside the repository.

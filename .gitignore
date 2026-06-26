@@ -21,6 +21,9 @@ android/app/release
 .env
 .env.*
 !.env.example
+!.env.firebase.example
+.firebaserc
+.firebase/
 lib/firebase_options.dart.bak
 
 # Firebase / Android local files
@@ -31,3 +34,8 @@ android/app/src/debug/google-services.json
 android/app/src/release/google-services.json
 ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
+
+# Local backend storage
+backend/data/store.json
+.tmp-appdata/
+.tmp-localappdata/
